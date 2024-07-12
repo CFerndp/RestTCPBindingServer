@@ -48,7 +48,7 @@ def start_experiment():
 @app.post(mainRoute+"/record_timestamp/{record_id}")
 def record_timestamp(record_id: int):
     Logger.info(f'Recording timestamp {record_id} at {time.time()}')
-    outlet.push_sample(record_id) 
+    outlet.push_sample([record_id]) 
     return {"status": "ok"}
 
 @app.post(f'{mainRoute}/stop')
