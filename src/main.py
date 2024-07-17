@@ -7,8 +7,13 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from pylsl import StreamInfo, StreamOutlet
 
+import ssl
 
 app = FastAPI()
+
+ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+ssl_context.load_cert_chain('cert/cert.pem', keyfile='cert/key.pem')
+
 mainRoute = "/enobio_binding"
 
 origins = [
@@ -29,8 +34,13 @@ MARKER_NAME = "GNB_P300_Marker"
 START_MARKER = "Start"
 STOP_MARKER = "Stop"
 
+MARKER_LENGTH = 10
+
+def formatStreanMSG(msg: str):
+    return msg[:MARKER_LENGTH].ljust(MARKER_LENGTH).capitalize()
+
 print ("Creating a new marker stream info...\n")
-info = StreamInfo(MARKER_NAME,'Markers',1,0,'int32','myuniquesourceid23443')
+info = StreamInfo(MARKER_NAME,'Markers',MARKER_LENGTH,0,'string','myuniquesourceid23443')
 
 print("Opening an outlet...\n")
 outlet =StreamOutlet(info)
@@ -44,19 +54,20 @@ def read_root():
 
 @app.post(mainRoute + "/start_experiment/{marker}")
 def start_experiment(marker: str):
-    Logger.info("Starting experiment")
-    outlet.push_sample([START_MARKER, marker]) 
+    msg = formatStreanMSG(f'{START_MARKER}-{marker}')
+    Logger.info("Starting experiment " + msg )
+    outlet.push_sample(msg) 
     
     return {"status": "ok"}
 
 @app.post(mainRoute + "/record_timestamp/{marker}")
 def record_timestamp(marker: str):
     Logger.info(f'Recording timestamp {marker} at {time.time()}')
-    outlet.push_sample([marker]) 
+    outlet.push_sample(formatStreanMSG(marker)) 
     return {"status": "ok"}
 
 @app.post(f'{mainRoute}/stop')
 def stop():
     Logger.info("Stopping experiment at " + str(time.time()))
-    outlet.push_sample([STOP_MARKER])
+    outlet.push_sample(formatStreanMSG(STOP_MARKER))
     return {"status": "ok"}
