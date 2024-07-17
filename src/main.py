@@ -26,8 +26,8 @@ app.add_middleware(
 Logger.basicConfig(level=Logger.INFO)
 
 MARKER_NAME = "GNB_P300_Marker"
-START_MARKER = 0
-STOP_MARKER = -1
+START_MARKER = "Start"
+STOP_MARKER = "Stop"
 
 print ("Creating a new marker stream info...\n")
 info = StreamInfo(MARKER_NAME,'Markers',1,0,'int32','myuniquesourceid23443')
@@ -50,7 +50,7 @@ def start_experiment():
     return {"status": "ok"}
 
 @app.post(mainRoute+"/record_timestamp/{record_id}")
-def record_timestamp(record_id: int):
+def record_timestamp(record_id: str):
     Logger.info(f'Recording timestamp {record_id} at {time.time()}')
     outlet.push_sample([record_id]) 
     return {"status": "ok"}
