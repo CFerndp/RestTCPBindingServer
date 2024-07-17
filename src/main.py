@@ -42,17 +42,17 @@ def read_root():
     return {"Hello": "World"}
 
 
-@app.post(f'{mainRoute}/start_experiment')
-def start_experiment():
+@app.post(mainRoute + "/start_experiment/{marker}")
+def start_experiment(marker: str):
     Logger.info("Starting experiment")
-    outlet.push_sample([START_MARKER]) 
+    outlet.push_sample([START_MARKER, marker]) 
     
     return {"status": "ok"}
 
-@app.post(mainRoute+"/record_timestamp/{record_id}")
-def record_timestamp(record_id: str):
-    Logger.info(f'Recording timestamp {record_id} at {time.time()}')
-    outlet.push_sample([record_id]) 
+@app.post(mainRoute + "/record_timestamp/{marker}")
+def record_timestamp(marker: str):
+    Logger.info(f'Recording timestamp {marker} at {time.time()}')
+    outlet.push_sample([marker]) 
     return {"status": "ok"}
 
 @app.post(f'{mainRoute}/stop')
