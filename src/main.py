@@ -26,16 +26,12 @@ app.add_middleware(
 Logger.basicConfig(level=Logger.INFO)
 
 MARKER_NAME = "GNB_P300_Marker"
-START_MARKER = "Start"
-STOP_MARKER = "Stop"
 
-MARKER_LENGTH = 10
+MARKER_STOP = -1
 
-def formatStreanMSG(msg: str):
-    return msg[:MARKER_LENGTH].ljust(MARKER_LENGTH).capitalize()
 
 print ("Creating a new marker stream info...\n")
-info = StreamInfo(MARKER_NAME,'Markers',MARKER_LENGTH,0,'string','myuniquesourceid23443')
+info = StreamInfo(MARKER_NAME,'Markers',1,0,'string','myuniquesourceid23443')
 
 print("Opening an outlet...\n")
 outlet =StreamOutlet(info)
@@ -48,21 +44,20 @@ def read_root():
 
 
 @app.post(mainRoute + "/start_experiment/{marker}")
-def start_experiment(marker: str):
-    msg = formatStreanMSG(f'{START_MARKER}-{marker}')
-    Logger.info("Starting experiment " + msg )
-    outlet.push_sample(msg) 
+def start_experiment(marker: int):
+    Logger.info("Starting experiment " + marker )
+    outlet.push_sample([marker]) 
     
     return {"status": "ok"}
 
 @app.post(mainRoute + "/record_timestamp/{marker}")
-def record_timestamp(marker: str):
+def record_timestamp(marker: int):
     Logger.info(f'Recording timestamp {marker} at {time.time()}')
-    outlet.push_sample(formatStreanMSG(marker)) 
+    outlet.push_sample([marker]) 
     return {"status": "ok"}
 
 @app.post(f'{mainRoute}/stop')
 def stop():
     Logger.info("Stopping experiment at " + str(time.time()))
-    outlet.push_sample(formatStreanMSG(STOP_MARKER))
+    outlet.push_sample([MARKER_STOP])
     return {"status": "ok"}
