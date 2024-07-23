@@ -1,2 +1,2 @@
 run:
-	uvicorn src.main:app --ssl-keyfile cert/key.pem --ssl-certfile cert/cert.pem
+uvicorn src.main:app --host 0.0.0.0
