@@ -31,7 +31,7 @@ MARKER_STOP = -1
 
 
 print ("Creating a new marker stream info...\n")
-info = StreamInfo(MARKER_NAME,'Markers',1,0,'string','myuniquesourceid23443')
+info = StreamInfo(MARKER_NAME,'Markers',1,0,'int32','myuniquesourceid23443')
 
 print("Opening an outlet...\n")
 outlet =StreamOutlet(info)
@@ -45,7 +45,7 @@ def read_root():
 
 @app.post(mainRoute + "/start_experiment/{marker}")
 def start_experiment(marker: int):
-    Logger.info("Starting experiment " + marker )
+    Logger.info(f'Starting experiment {marker}')
     outlet.push_sample([marker]) 
     
     return {"status": "ok"}
