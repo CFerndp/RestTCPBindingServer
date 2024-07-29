@@ -45,19 +45,16 @@ def read_root():
 
 @app.post(mainRoute + "/start_experiment/{marker}")
 def start_experiment(marker: int):
-    Logger.info(f'Starting experiment {marker}')
     outlet.push_sample([marker]) 
     
     return {"status": "ok"}
 
 @app.post(mainRoute + "/record_timestamp/{marker}")
 def record_timestamp(marker: int):
-    Logger.info(f'Recording timestamp {marker} at {time.time()}')
     outlet.push_sample([marker]) 
     return {"status": "ok"}
 
 @app.post(f'{mainRoute}/stop')
 def stop():
-    Logger.info("Stopping experiment at " + str(time.time()))
     outlet.push_sample([MARKER_STOP])
     return {"status": "ok"}
