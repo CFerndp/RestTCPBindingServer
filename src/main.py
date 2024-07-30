@@ -46,7 +46,6 @@ def read_root():
 @app.post(mainRoute + "/start_experiment/{marker}")
 def start_experiment(marker: int):
     outlet.push_sample([marker]) 
-    
     return {"status": "ok"}
 
 @app.post(mainRoute + "/record_timestamp/{marker}")
